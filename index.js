@@ -1,25 +1,28 @@
+//Packages needed
 const { Client } = require("discord.js");
 const keepAlive = require('./server.js');
- 
 const client = new Client({
   disableEveryone: true
 });
- 
+
+//Keep alive & Login into the bot
 keepAlive();
 client.login(process.env.TOKEN);
 
+//Requirements
 const discord = require("discord.js");
 const { prefix, ServerID } = require("./config.json")
 const config = require('./config.json');
 
+//Client Ready
 client.on("ready", () => {
-
-    console.log("Bot online")
-    client.user.setActivity("!help", { type: "STREAMING", url:"https://www.twitch.tv/captain_motchy"})
+  console.log("[CONSOLE: Host]: Server.js is Ready!",`\n-------------------------------------------\n[CONSOLE: Client]: Your bot is ready & online!`, `\n[CONSOLE: Client]: Bot Name: ${client.user.tag} \n[CONSOLE: Client]: Bot ID: ${client.user.id}`, "\n[CONSOLE: Client]: Your bot token is protected. 🔒", "\n-------------------------------------------\n[CONSOLE: Info]: Your bot is can be hosted 24/7 on Uptimerobot. Visit this website: https://www.uptimerobot.com/")
+    client.user.setActivity("!help", { type: "PLAYING" })
 })
 
+//Console Design
 
-
+//Code
 client.on("channelDelete", (channel) => {
     if (channel.parentID == channel.guild.channels.cache.find((x) => x.name == "MODMAIL").id) {
         const person = channel.guild.members.cache.find((x) => x.id == channel.name)
@@ -29,7 +32,7 @@ client.on("channelDelete", (channel) => {
         let yembed = new discord.MessageEmbed()
             .setAuthor("MAIL Closed:", client.user.displayAvatarURL())
             .setColor('RED')
-            .setDescription("Please do not respond to this message until you need any more help!")
+            .setDescription(":x: Please do not respond to this message until you need any more help!")
         return person.send(yembed)
 
     }
@@ -53,15 +56,15 @@ client.on("message", async message => {
         if (command == "mod-mail") {
             if (!message.content.startsWith(prefix)) return;
             if (!message.member.hasPermission("ADMINISTRATOR")) {
-                return message.channel.send("You need Admin Permissions to setup the modmail system!")
+                return message.channel.send(":x: You need Admin Permissions to setup the modmail system!")
             }
 
             if (!message.guild.me.hasPermission("ADMINISTRATOR")) {
-                return message.channel.send("Bot need Admin Permissions to setup the modmail system!")
+                return message.channel.send(":x: Bot need Admin Permissions to setup the modmail system!")
             }
 
 
-            let role = message.guild.roles.cache.find((x) => x.name == "Support Team Member")
+            let role = message.guild.roles.cache.find((x) => x.name == "Staff")
             let everyone = message.guild.roles.cache.find((x) => x.name == "@everyone")
 
             if (!role) {
@@ -70,7 +73,7 @@ client.on("message", async message => {
                         name: "ModMail",
                         color: "YELLOW"
                     },
-                    reason: "Role needed for ModMail System!"
+                    reason: ":x: Role needed for ModMail System!"
                 })
             }
 
@@ -90,25 +93,25 @@ client.on("message", async message => {
             })
 
 
-            return message.channel.send("Setup is Completed! ✅")
+            return message.channel.send("✅ Setup is Completed!")
 
         } else if (command == "close") {
             if (!message.content.startsWith(prefix)) return;
             if (!message.member.roles.cache.find((x) => x.name == "Staff")) {
-                return message.channel.send("You need Staff role to use this command!")
+                return message.channel.send(":x: You need Staff role to use this command!")
             }
             if (message.channel.parentID == message.guild.channels.cache.find((x) => x.name == "MODMAIL").id) {
 
                 const person = message.guild.members.cache.get(message.channel.name)
 
                 if (!person) {
-                    return message.channel.send("I am Unable to close the channel and this error is coming because probaly channel name is changed.")
+                    return message.channel.send(":x: I am Unable to close the channel and this error is coming because probaly channel name is changed.\n```Error: {}```")
                 }
 
                 await message.channel.delete()
 
                 let yembed = new discord.MessageEmbed()
-                    .setAuthor("MAIL CLOSED", client.user.displayAvatarURL())
+                    .setAuthor("MAIL Closed Succesfully!", client.user.displayAvatarURL())
                     .setColor("RED")
                     .setThumbnail(client.user.displayAvatarURL())
                     .setFooter("Mail is closed by " + message.author.username)
@@ -122,21 +125,21 @@ client.on("message", async message => {
             const category = message.guild.channels.cache.find((x) => x.name == "MODMAIL")
 
             if (!category) {
-                return message.channel.send("Modmail system is not setuped in this server, use " + prefix + "setup")
+                return message.channel.send(":x: Modmail system is not setuped in this server, use " + prefix + "setup")
             }
 
             if (!message.member.roles.cache.find((x) => x.name == "Staff")) {
-                return message.channel.send("You need `Staff` role to use this command!")
+                return message.channel.send(":x: You need `Staff` role to use this command!")
             }
 
             if (isNaN(args[0]) || !args.length) {
-                return message.channel.send("Please Give the ID of the person!")
+                return message.channel.send(":x: Please Give the ID of the person!")
             }
 
             const target = message.guild.members.cache.find((x) => x.id === args[0])
 
             if (!target) {
-                return message.channel.send("Unable to find this person!")
+                return message.channel.send(":x: Unable to find this person!")
             }
 
 
@@ -243,7 +246,7 @@ client.on("message", async message => {
                 .setDescription(message.content)
                 .addField("Name", message.author.username)
                 .addField("Account Creation Date", message.author.createdAt)
-                .addField("© made by district74™", "[Official support server](https://dsc.gg/dst74)")
+                .addField("© made by T.F.A", "[Join Official support server!](https://dsc.gg/codingworldtfa)")
 
 
             return mx.send(eembed)
@@ -264,5 +267,5 @@ client.on("message", async message => {
 
 })
 
-
+//Make sure to login to the bot:
 client.login(process.env.TOKEN)
